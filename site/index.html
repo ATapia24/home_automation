@@ -1,0 +1,448 @@
+<html>
+<head>
+<script type="text/javascript" src="node_modules/particle-api-js/dist/particle.min.js">
+</script>
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+}
+</style>
+</head>
+<body>
+	<div>
+	<table align="center" style="width:80%">
+		<tr>
+			<th>ITEM</th>
+			<th>TOGGLE</th>
+			<th>SET</th>
+			<th>VALUE</th>
+		</tr>
+		
+		<tr id="ML1_ROW">
+			<th>Garage Outdoor Lights</th>
+			<th><button id="M_LIGHT1_TOGGLE" onclick="motion_light_toggle(M_LIGHT1)">ON</button></th>
+			<th><button id="M_LIGHT1_SET" onclick="motion_light_set(M_LIGHT1)">SET</button></th>
+			<th><input id="M_LIGHT1_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		t
+		<tr ID="ML2_ROW">
+			<th>Door Lights</th>
+			<th><button id="M_LIGHT2_TOGGLE" onclick="motion_light_toggle(M_LIGHT2)">ON</button></th>
+			<th><button id="M_LIGHT2_SET" onclick="motion_light_set(M_LIGHT2)">SET</button></th>
+			<th><input id="M_LIGHT2_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		
+		
+		<tr id="F1_ROW">
+			<th>Master Bedroom Fan</th>
+			<th><button id="FAN1_TOGGLE" onclick="fan_toggle(FAN1)">ON</button></th>
+			<th><button id="FAN1_SET">SET</button></th>
+			<th><input id="FAN1_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+
+		<tr id="F3_ROW">
+			<th>Spare Bedroom Fan</th>
+			<th><button id="FAN3_TOGGLE" onclick="fan_toggle(FAN3)">ON</button></th>
+			<th><button id="FAN3_SET">SET</button></th>
+			<th><input id="FAN3_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		
+		
+		<tr id="F2_ROW">
+			<th>Living Room Fan 1</th>
+			<th><button id="FAN2_TOGGLE" onclick="fan_toggle(FAN2)">ON</button></th>
+			<th><button id="FAN2_SET">SET</button></th>
+			<th><input id="FAN2_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+	
+		<tr id="F4_ROW">
+			<th>Living Room Fan 2</th>
+			<th><button id="FAN4_TOGGLE" onclick="fan_toggle(FAN4)">ON</button></th>
+			<th><button id="FAN4_SET">SET</button></th>
+			<th><input id="FAN4_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		
+		
+		<tr id="L1_ROW">
+			<th>Indoor Garage Light</th>
+			<th><button id="LIGHT1_TOGGLE" onclick="light_toggle(LIGHT1)">ON</button></th>
+			<th><button id="LIGHT1_SET">SET</button></th>
+			<th><input id="LIGHT1_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		
+		<tr id="L2_ROW">
+			<th>Laundry Room Light</th>
+			<th><button id="LIGHT2_TOGGLE" onclick="light_toggle(LIGHT2)">ON</button></th>
+			<th><button id="LIGHT2_SET">SET</button></th>
+			<th><input id="LIGHT2_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		
+		<tr id="L3_ROW">
+			<th>Spare Bedroom Light</th>
+			<th><button id="LIGHT3_TOGGLE" onclick="light_toggle(LIGHT3)">ON</button></th>
+			<th><button id="LIGHT3_SET">SET</button></th>
+			<th><input id="LIGHT3_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		
+		<tr id="L_ROW4">
+			<th>Bathroom Light</th>
+			<th><button id="LIGHT4_TOGGLE" onclick="light_toggle(LIGHT4)">ON</button></th>
+			<th><button id="LIGHT4_SET">SET</button></th>
+			<th><input id="LIGHT4_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		
+		<tr id="L_ROW5">
+			<th>Master Bedroom Light</th>
+			<th><button id="LIGHT5_TOGGLE" onclick="light_toggle(LIGHT5)">ON</button></th>
+			<th><button id="LIGHT5_SET">SET</button></th>
+			<th><input id="LIGHT5_RANGE" type ="range" min ="0" max="255" step ="1" value ="0"/></th>
+		</tr>
+		
+		
+		<tr id="L_ROW6">
+			<th>Living Room Lights</th>
+			<th><button id="LIGHT6_TOGGLE" onclick="light_toggle(LIGHT6)">ON</button></th>
+			<th></th>
+			<th></th>
+		</tr>
+		
+		<tr id="G_ROW">
+			<th>Garage</th>
+			<th><button id="GARAGE_TOGGLE" onclick="garage_toggle()">OPEN</button></th>
+		</tr>
+		
+		<tr>
+			<th>Light Sensor</th>
+			<th id="A0_VALUE"></th>
+		</tr>
+		
+	</table>
+
+</body>
+<script type="text/javascript">
+var particle = new Particle();
+var token = '05c3860060d50e75a8b8441f6b2e9dc3bf47958f';
+var devID;
+var loaded = false;
+//pin and function keys
+const M_LIGHT1 = 0x0D;
+const M_LIGHT2 = 0x01;
+const GARAGE = 0x02;
+const GARAGE_OPEN = 0; //need to test
+const GARAGE_CLOSE = 0xFF;// need to test
+const FAN1 = 0x03;
+const FAN2 = 0x04;
+const FAN3 = 0x05;
+const FAN4 = 0x06;
+const N_FANS = 4;
+const LIGHT1 = 0x07;
+const LIGHT2 = 0x08;
+const LIGHT3 = 0x09;
+const LIGHT4 = 0x0A;
+const LIGHT5 = 0x0B;
+const LIGHT6 = 0x0C;
+const N_LIGHTS = 6;
+const DIGITAL = 0x00;
+const ANALOG = 0x10;
+const SOFT_DIGITAL = 0x20;
+const GOTO_ANALOG = 0x30;
+const MASTER = 0x40;
+const MASTER_M_LIGHT = 0x50;
+const MASTER_FAN = 0x60;
+const MASTER_LIGHT = 0x70;
+const DIGITAL_READ = 0x80;
+const ANALOG_READ = 14;
+const MASTER_DIGITAL = 0x00;
+const MASTER_ANALOG = 0xA0;
+const MASTER_GOTO_ANALOG = 0x02;
+const HIGH = 0x01;
+const LOW = 0x00;
+
+window.onload = function(data)
+{
+
+    var devicesPr = particle.listDevices({ auth: token });
+    devicesPr.then(
+      function(devices){
+		console.log("test");
+        return devices.body[0];
+
+      },
+      function(err) {
+        console.log('List devices call failed: ', err);
+      }
+    ).then(function(device){
+       console.info(device);
+
+        var devicesPr = particle.getDevice({ deviceId: device.id, auth: token });
+		
+        devicesPr.then(function(data)
+		  {
+            console.log('Device attrs retrieved successfully:', data);
+          }
+          ,function(err)
+		  {
+            console.log('API call failed: ', err);
+          }
+        );
+		
+		devID = device.id;
+		loaded = true;
+    }) ;
+
+}
+
+//SEND DATA #########################################################################################################################################
+//desc. send a string of data containing two char's, first = io type + pin data, second = value
+function send_data(type, pin, value)
+{
+	particle.callFunction({ deviceId: devID, name: 'send_data', argument: String.fromCharCode(type + pin) + String.fromCharCode(value), auth: token });
+	console.log('TYPE: ', type > 15 ? type / 16 : type, ' KEY: ', pin, ' PIN: ', pin+2, ' VALUE: ', value);
+};
+
+//READ SENNSOR VALUE
+//desc. read sensor sensor value from arduino
+window.setInterval(function(){
+	if(loaded == true)
+	{
+		send_data(ANALOG, ANALOG_READ, 0);
+		particle.getVariable({ deviceId: devID, name: 'sensor_value', auth: token }).then(function(data) {
+		document.getElementById("A0_VALUE").innerHTML = data.body.result;
+		console.log(data.valueOf());
+		}, function(err) {
+			console.log('Unable to read analog value:', err);
+		});
+	}
+
+}, 5000);
+
+
+//MOTION LIGHT CONTROL ##############################################################################################################################
+//TOGGLE
+function motion_light_toggle(m_light)
+{
+	var light_num = m_light + 1;
+	var bttn;
+	if(m_light == M_LIGHT1)
+	bttn = document.getElementById("M_LIGHT1_TOGGLE");
+		else
+	bttn = document.getElementById("M_LIGHT2_TOGGLE");
+	if (bttn.innerHTML=="ON")
+	{
+		send_data(DIGITAL, m_light, HIGH);
+		bttn.innerHTML = "OFF";
+	}
+	else
+	{
+		send_data(DIGITAL, m_light, LOW);
+		bttn.innerHTML = "ON";
+	}
+};
+
+//SET
+function motion_light_set(m_light)
+{
+	var bttn, toggle, range;
+	if(m_light == M_LIGHT1)
+	{
+		name = "M_LIGHT1_SET";
+		toggle = document.getElementById("M_LIGHT1_TOGGLE");
+		range = document.getElementById("M_LIGHT1_RANGE").value;
+	}
+	else
+	{
+		name = "M_LIGHT1_SET";
+		toggle = document.getElementById("M_LIGHT2_TOGGLE");
+		range = document.getElementById("M_LIGHT2_RANGE").value;
+	}	
+	
+	bttn = document.getElementById(name);
+	send_data(ANALOG, m_light, parseInt(range));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+};
+
+//MASTER MOTION LIGHT ###############################################################################################################################
+//TOGGLE
+/*document.getElementById("MASTER_M_LIGHT_TOGGLE").addEventListener("click", function() //TOGGLE
+{
+	var master_bttn = document.getElementById("MASTER_M_LIGHT_TOGGLE");
+	if (master_bttn.innerHTML=="ON")
+	{
+		send_data(MASTER_M_LIGHT, MASTER_DIGITAL, LOW)
+		master_bttn.innerHTML = "OFF";
+	}
+	else
+	{
+		send_data(MASTER_M_LIGHT, MASTER_DIGITAL, HIGH)
+		master_bttn.innerHTML = "ON";
+	}
+	for(var i=0; i<2; i++)
+		document.getElementById("M_LIGHT" + parseInt(i+1) + "_TOGGLE").innerHTML = master_bttn.innerHTML;
+
+});*/
+
+//LIGHT CONTROL #####################################################################################################################################
+function light_toggle(light) //TOGGLE
+{
+	var light_num = light - LIGHT1 + 1;
+	var bttn = document.getElementById("LIGHT" + light_num + "_TOGGLE");
+	if (bttn.innerHTML=="ON")
+	{
+		send_data(DIGITAL, light_num + N_LIGHTS, HIGH);
+		bttn.innerHTML = "OFF";
+	}
+	else
+	{
+		send_data(DIGITAL, light_num + N_LIGHTS, LOW);
+		bttn.innerHTML = "ON";
+	}
+};
+
+//SETS
+document.getElementById("LIGHT1_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("LIGHT1_TOGGLE");
+	send_data(ANALOG, LIGHT1, parseInt(document.getElementById("LIGHT1_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+document.getElementById("LIGHT2_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("LIGHT2_TOGGLE");
+	send_data(ANALOG, LIGHT2, parseInt(document.getElementById("LIGHT2_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+document.getElementById("LIGHT3_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("LIGHT3_TOGGLE");
+	send_data(ANALOG, LIGHT3, parseInt(document.getElementById("LIGHT3_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+document.getElementById("LIGHT4_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("LIGHT4_TOGGLE");
+	send_data(ANALOG, LIGHT4, parseInt(document.getElementById("LIGHT4_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+document.getElementById("LIGHT5_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("LIGHT5_TOGGLE");
+	send_data(ANALOG, LIGHT5, parseInt(document.getElementById("LIGHT5_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+
+//MASTER LIGHT ######################################################################################################################################
+//document.getElementById("MASTER_LIGHT_TOGGLE").addEventListener("click", function() //TOGGLE
+/*{
+	var master_bttn = document.getElementById("MASTER_LIGHT_TOGGLE");
+	if (master_bttn.innerHTML=="ON")
+	{
+		send_data(MASTER_LIGHT, MASTER_DIGITAL, LOW)
+		master_bttn.innerHTML = "OFF";
+	}
+	else
+	{
+		send_data(MASTER_LIGHT, MASTER_DIGITAL, HIGH)
+		master_bttn.innerHTML = "ON";
+	}
+	for(var i=0; i<N_LIGHTS; i++)
+		document.getElementById("LIGHT" + parseInt(i+1) + "_TOGGLE").innerHTML = master_bttn.innerHTML;
+
+});*/
+
+//FAN CONTROL #######################################################################################################################################
+function fan_toggle(fan) //TOGGLE
+{
+	const fan_num = fan - FAN1 + 1;
+	console.log(fan_num);
+	var bttn = document.getElementById("FAN" + fan_num + "_TOGGLE");
+	if (bttn.innerHTML=="ON")
+	{
+		send_data(DIGITAL, fan_num + 2, HIGH);
+		bttn.innerHTML = "OFF";
+	}
+	else
+	{
+		send_data(DIGITAL, fan_num + 2, LOW);
+		bttn.innerHTML = "ON";
+	}
+};
+//SETS
+document.getElementById("FAN1_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("FAN1_TOGGLE");
+	send_data(ANALOG, FAN1, parseInt(document.getElementById("FAN1_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+document.getElementById("FAN2_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("FAN2_TOGGLE");
+	send_data(ANALOG, FAN2, parseInt(document.getElementById("FAN2_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+document.getElementById("FAN3_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("FAN3_TOGGLE");
+	send_data(ANALOG, FAN3, parseInt(document.getElementById("FAN3_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+document.getElementById("FAN4_SET").addEventListener("click", function() //SET
+{
+	var toggle = document.getElementById("FAN4_TOGGLE");
+	send_data(ANALOG, FAN4, parseInt(document.getElementById("FAN4_RANGE").value));
+	toggle.innerHTML == "ON" ? toggle.innerHTML = "OFF" : toggle;
+});
+
+//MASTER_FAN ###################################################################################################################################
+/*document.getElementById("MASTER_FAN_TOGGLE").addEventListener("click", function() //TOGGLE
+{
+	var master_bttn = document.getElementById("MASTER_FAN_TOGGLE");
+	if (master_bttn.innerHTML=="ON")
+	{
+		send_data(MASTER_FAN, MASTER_DIGITAL, LOW)
+		master_bttn.innerHTML = "OFF";
+	}
+	else
+	{
+		send_data(MASTER_FAN, MASTER_DIGITAL, HIGH)
+		master_bttn.innerHTML = "ON";
+	}
+	for(var i=0; i<N_FANS; i++)
+		document.getElementById("FAN" + parseInt(i+1) + "_TOGGLE").innerHTML = master_bttn.innerHTML;
+
+});
+*/
+//GARAGE #######################################################################################################################################
+function garage_toggle() //TOGGLE
+{
+	var bttn = document.getElementById("GARAGE_TOGGLE");
+	var row = document.getElementById("G_ROW");
+	if (bttn.innerHTML=="OPEN")
+	{
+		send_data(ANALOG, GARAGE, GARAGE_OPEN);
+		bttn.innerHTML = "CLOSE";
+	}
+	else
+	{
+		send_data(ANALOG, GARAGE, GARAGE_CLOSE);
+		bttn.innerHTML = "OPEN";
+	}
+};
+</script>
+</html>
+
+
+
+
+
+
